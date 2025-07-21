@@ -17,7 +17,7 @@ from poker.tests.test_log import assert_equivalent_game_states  # noqa
 class RaiseAmountTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'raise_amount.json')
-        super(RaiseAmountTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -37,7 +37,7 @@ class RaiseAmountTest(EventReplayerTest):
 class RaiseAmount2Test(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'raise_amount2.json')
-        super(RaiseAmount2Test, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -58,7 +58,7 @@ class RaiseAmount2Test(EventReplayerTest):
 class RaiseAmount3Test(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'raise_amount3.json')
-        super(RaiseAmount3Test, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -79,7 +79,7 @@ class RaiseAmount3Test(EventReplayerTest):
 class BetAmountTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'bet_amount.json')
-        super(BetAmountTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -100,7 +100,7 @@ class BetAmountTest(EventReplayerTest):
 class CallSameSizeTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'call_same_size.json')
-        super(CallSameSizeTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -115,7 +115,7 @@ class CallSameSizeTest(EventReplayerTest):
 class BrokenShowdownTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'broken_showdown.json')
-        super(BrokenShowdownTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -128,7 +128,7 @@ class BrokenShowdownTest(EventReplayerTest):
 class FirstToActTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'first_to_act_after_allin.json')
-        super(FirstToActTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -140,7 +140,7 @@ class FirstToActTest(EventReplayerTest):
 class FirstToAct2Test(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'first_to_act2.json')
-        super(FirstToAct2Test, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -155,7 +155,7 @@ class FirstToAct2Test(EventReplayerTest):
 class HandEndWithOneAllinTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'hand_should_end.json')
-        super(HandEndWithOneAllinTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -178,7 +178,7 @@ class HandEndWithOneAllinTest(EventReplayerTest):
 class NextToActTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'next_to_act.json')
-        super(NextToActTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -192,7 +192,7 @@ class NextToActTest(EventReplayerTest):
 class NextToAct2Test(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'next_to_act2.json')
-        super(NextToAct2Test, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -206,7 +206,7 @@ class NextToAct2Test(EventReplayerTest):
 class NextToAct3Test(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'next_to_act3.json')
-        super(NextToAct3Test, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -218,7 +218,7 @@ class NextToAct3Test(EventReplayerTest):
 class NextToAct4Test(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'next_to_act4.json')
-        super(NextToAct4Test, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -230,7 +230,7 @@ class NextToAct4Test(EventReplayerTest):
 class BrokenPostTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'broken_post.json')
-        super(BrokenPostTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -244,7 +244,7 @@ class BrokenPostTest(EventReplayerTest):
 class FaultyRaiseTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'faulty_raise.json')
-        super(FaultyRaiseTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         self.replayer.skip_to_end_of_hand()
@@ -266,7 +266,7 @@ class FaultyRaiseTest(EventReplayerTest):
 class HandEndsTest(EventReplayerTest):
     def setUp(self):
         filename = os.path.join(HH_TEST_PATH, 'end_hand.json')
-        super(HandEndsTest, self).setUp(filename=filename)
+        super().setUp(filename=filename)
 
     def test_stuff(self):
         accessor = self.replayer.controller.accessor

@@ -15,16 +15,20 @@ from .models import (
 )
 
 
+@admin.register(Player)
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('short_id', 'username', 'table', 'seated', 'position', 'stack')
 
+@admin.register(PokerTable)
 class PokerTableAdmin(admin.ModelAdmin):
     list_display = ('short_id', 'name', 'table_type', 'tournament', 'num_seats', 'sb', 'bb', 'min_buyin', 'max_buyin', 'hand_number')
     search_fields = ('id', 'name', 'table_type', 'tournament')
 
+@admin.register(HandHistory)
 class HandHistoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'table', 'timestamp', 'hand_number')
 
+@admin.register(ChatHistory)
 class ChatHistoryAdmin(admin.ModelAdmin):
     list_display = ('short_id', 'users')
 
@@ -36,14 +40,10 @@ class ChatHistoryAdmin(admin.ModelAdmin):
         })
 
 
-admin.site.register(Player, PlayerAdmin)
-admin.site.register(PokerTable, PokerTableAdmin)
 
-admin.site.register(HandHistory, HandHistoryAdmin)
 admin.site.register(HandHistoryEvent)
 admin.site.register(HandHistoryAction)
 
-admin.site.register(ChatHistory, ChatHistoryAdmin)
 admin.site.register(ChatLine)
 admin.site.register(PokerTableStats)
 

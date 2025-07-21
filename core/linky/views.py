@@ -1,6 +1,7 @@
 import random, string
 
-from typing import Optional, List, Mapping
+from typing import Optional, List
+from collections.abc import Mapping
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
@@ -18,8 +19,8 @@ CAMPAIGNS = [
 ALLOWED_SHORTENED_VIEWS = {'Table', 'TournamentSummary'}
 
 def create_link(viewname:str,
-                args:Optional[List[str]]=None,
-                kwargs:Optional[Mapping[str,str]]=None,
+                args:list[str] | None=None,
+                kwargs:Mapping[str,str] | None=None,
                 campaign_name=None,
                 user=None) -> str:
 

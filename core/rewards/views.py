@@ -20,7 +20,7 @@ from .constants import (
 logger = logging.getLogger('oddslingers')
 
 
-def earn_first_time_chips(badge: Badge) -> List[BaseModel]:
+def earn_first_time_chips(badge: Badge) -> list[BaseModel]:
     if badge.name in NEWCOMER_BADGES.keys():
         reward_amt = NEWCOMER_REWARD
     elif badge.name in EXCEPTIONAL_BADGES.keys():
@@ -34,7 +34,7 @@ def earn_first_time_chips(badge: Badge) -> List[BaseModel]:
     )
 
 
-def reward_completed_badge(user: User, currently_earned=None) -> List[BaseModel]:
+def reward_completed_badge(user: User, currently_earned=None) -> list[BaseModel]:
     for badge in NEWCOMER_BADGES.keys():
         badge_doesnt_exist = not Badge.objects.filter(
             user=user,
@@ -53,8 +53,8 @@ def reward_completed_badge(user: User, currently_earned=None) -> List[BaseModel]
     ]
 
 
-def award_badge(user: User, name: str, max_times: int=None) -> List[BaseModel]:
-    objects_to_save: List[BaseModel] = []
+def award_badge(user: User, name: str, max_times: int=None) -> list[BaseModel]:
+    objects_to_save: list[BaseModel] = []
     if name not in BADGE_DESCRIPTIONS.keys():
         raise ValueError(
             f"Trying to reward a badge that doesn't exist: {name}"
@@ -95,7 +95,7 @@ def award_badge(user: User, name: str, max_times: int=None) -> List[BaseModel]:
     return objects_to_save
 
 
-def reward_attempted_xss(user: User, input_val: dict) -> List[BaseModel]:
+def reward_attempted_xss(user: User, input_val: dict) -> list[BaseModel]:
     string = str(input_val).lower()
 
     if any(attack in string for attack in XSS_STRINGS):
@@ -107,14 +107,14 @@ def reward_attempted_xss(user: User, input_val: dict) -> List[BaseModel]:
     return []
 
 
-def reward_swearing(user: User, input_val: dict) -> List[BaseModel]:
+def reward_swearing(user: User, input_val: dict) -> list[BaseModel]:
     string = str(input_val).lower()
 
     if any(word in string for word in SWEAR_WORDS):
         return award_badge(user=user, name='potty_mouth', max_times=10)
     return []
 
-def check_xss_swearing(user: User, input_val: dict) -> Tuple[List[BaseModel], bool]:
+def check_xss_swearing(user: User, input_val: dict) -> tuple[list[BaseModel], bool]:
     badge_objs = reward_attempted_xss(user, input_val)
     badge_objs += reward_swearing(user, input_val)
     return badge_objs

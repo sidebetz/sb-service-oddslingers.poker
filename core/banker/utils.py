@@ -17,7 +17,7 @@ from poker.models import PokerTable, Freezeout
 
 
 def get_timing_kwargs(start_date: datetime=None,
-                      end_date: datetime=None) -> Dict:
+                      end_date: datetime=None) -> dict:
     timing_kwargs = {}
     if start_date is not None:
         timing_kwargs['timestamp__gte'] = start_date

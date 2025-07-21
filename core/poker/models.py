@@ -2,13 +2,14 @@ import logging
 
 from datetime import timedelta, datetime
 from decimal import Decimal
-from typing import Optional, Union, Tuple, Iterable, List
+from typing import Optional, Union, Tuple, List
+from collections.abc import Iterable
 
 from django.db import models
 from django.db.models import Prefetch
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -31,7 +32,7 @@ logger = logging.getLogger('poker')
 
 ChangeKey = str
 ChangeVal = Union[Deck, Decimal, str, int, bool, list, Event, PlayingState]
-Change = Tuple[ChangeKey, ChangeVal]
+Change = tuple[ChangeKey, ChangeVal]
 ChangeList = Iterable[Change]
 
 
@@ -59,7 +60,7 @@ class ChatLine(models.Model):
 
     class Meta:
         unique_together = (('chat_history', 'timestamp', 'user'),)
-        index_together = (('chat_history', 'timestamp'),)
+        indexes = [models.Index(fields=("chat_history", "timestamp"))]
 
     def __json__(self) -> dict:
         return {
@@ -138,7 +139,7 @@ class PokerTournament(BaseModel, DispatchHandlerModel):
         return f'/tournament/{self.short_id}/'
 
     @property
-    def table_path(self) -> Optional[str]:
+    def table_path(self) -> str | None:
         table = self.pokertable_set.first()
         return table and table.path
 
@@ -161,7 +162,7 @@ class PokerTournament(BaseModel, DispatchHandlerModel):
         self.status = TournamentStatus.STARTED.value
         self.save()
 
-    def get_entrants(self) -> List[dict]:
+    def get_entrants(self) -> list[dict]:
         return [
             entrant.attrs('id', 'username', 'profile_image', 'is_robot')
             for entrant in self.entrants.all()
@@ -172,7 +173,7 @@ class PokerTournament(BaseModel, DispatchHandlerModel):
             ('status', TournamentStatus.FINISHED.value,),
         )
 
-    def get_results(self) -> List[dict]:
+    def get_results(self) -> list[dict]:
         results = self.results.order_by('placement')
         return [result.__json__() for result in results]
 
@@ -386,7 +387,7 @@ class PokerTable(BaseModel, DispatchHandlerModel):
         self.deck_str = ','.join(deck_obj.to_list())
 
     @property
-    def last_action(self) -> Optional[Event]:
+    def last_action(self) -> Event | None:
         if not self.last_action_int:
             return None
         return Event(self.last_action_int)
@@ -399,19 +400,19 @@ class PokerTable(BaseModel, DispatchHandlerModel):
             self.last_action_int = Event.value
 
     @property
-    def board(self) -> List[Card]:
+    def board(self) -> list[Card]:
         if not self.board_str:
             return []
         return [Card(c) for c in self.board_str.split(',')]
 
     @board.setter
-    def board(self, board_list: List[Card]):
+    def board(self, board_list: list[Card]):
         assert hasattr(board_list, '__iter__'), \
             'The passed board_list is not an iterable'
         board_list = [str(c) for c in board_list]
         self.board_str = ','.join(board_list)
 
-    def cards_to_deal(self, n_cards) -> List[Card]:
+    def cards_to_deal(self, n_cards) -> list[Card]:
         deck = Deck(self.deck_str.split(','))
         return [deck.deal() for _ in range(n_cards)]
 
@@ -506,9 +507,9 @@ class PokerTable(BaseModel, DispatchHandlerModel):
     ##########
     # Events
     @autocast
-    def on_set_blind_pos(self, btn_pos: Optional[Decimal],
-                               sb_pos: Optional[Decimal],
-                               bb_pos: Optional[Decimal]) -> ChangeList:
+    def on_set_blind_pos(self, btn_pos: Decimal | None,
+                               sb_pos: Decimal | None,
+                               bb_pos: Decimal | None) -> ChangeList:
         return (
             ('btn_idx', btn_pos),
             ('sb_idx', sb_pos),
@@ -516,9 +517,9 @@ class PokerTable(BaseModel, DispatchHandlerModel):
         )
 
     @autocast
-    def on_set_blinds(self, sb: Optional[Decimal] = None,
-                            bb: Optional[Decimal] = None,
-                            ante: Optional[Decimal] = None) -> ChangeList:
+    def on_set_blinds(self, sb: Decimal | None = None,
+                            bb: Decimal | None = None,
+                            ante: Decimal | None = None) -> ChangeList:
         return (
             ('sb', sb if sb is not None else self.sb),
             ('bb', bb if bb is not None else self.bb),
@@ -526,7 +527,7 @@ class PokerTable(BaseModel, DispatchHandlerModel):
         )
 
     @autocast
-    def on_shuffle(self, deck_str: Optional[str] = None) -> ChangeList:
+    def on_shuffle(self, deck_str: str | None = None) -> ChangeList:
         if deck_str is None:
             return (('deck', Deck()),)
         else:
@@ -776,7 +777,7 @@ class Player(BaseModel, DispatchHandlerModel):
 
     class Meta:
         unique_together = (('table', 'user'),)
-        index_together = (('table', 'user'),)
+        indexes = [models.Index(fields=("table", "user"))]
 
     def dispatch(self, event, **kwargs):
         if event in PLAYER_API:
@@ -823,33 +824,33 @@ class Player(BaseModel, DispatchHandlerModel):
         return Event(self.last_action_int)
 
     @last_action.setter
-    def last_action(self, event: Optional[Event]):
+    def last_action(self, event: Event | None):
         if event is None:
             self.last_action_int = event
         else:
             self.last_action_int = event.value
 
     @property
-    def playing_state(self) -> Optional[PlayingState]:
+    def playing_state(self) -> PlayingState | None:
         if not self.playing_state_int:
             return None
         return PlayingState(self.playing_state_int)
 
     @playing_state.setter
-    def playing_state(self, playing_state: Optional[PlayingState]):
+    def playing_state(self, playing_state: PlayingState | None):
         if playing_state is None:
             self.playing_state_int = playing_state
         else:
             self.playing_state_int = playing_state.value
 
     @property
-    def cards(self) -> List[Card]:
+    def cards(self) -> list[Card]:
         if not self.cards_str:
             return []
         return [Card(c) for c in self.cards_str.split(',')]
 
     @cards.setter
-    def cards(self, cards_list: List[Card]):
+    def cards(self, cards_list: list[Card]):
         assert hasattr(cards_list, '__iter__'), \
                 'The passed cards_list is not an iterable'
         self.cards_str = ','.join(str(c) for c in cards_list)
@@ -910,7 +911,7 @@ class Player(BaseModel, DispatchHandlerModel):
                     or self.wagers
                     or self.dead_money
                     or self.uncollected_bets), \
-            '{} still has in-hand state; cannot leave the hand!'.format(self)
+            f'{self} still has in-hand state; cannot leave the hand!'
 
     ##########
     # events
@@ -1265,7 +1266,7 @@ class HandHistory(models.Model):
 
     class Meta:
         unique_together = (('table', 'hand_number'), ('table', 'timestamp'))
-        index_together = (('table', 'hand_number'))
+        indexes = [models.Index(fields=("table", "hand_number"))]
 
     def events(self):
         return self.handhistoryevent_set.all()

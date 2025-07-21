@@ -25,17 +25,17 @@ SUPPORTED_METHODS = [
 METHOD_ERROR_MSG = "Method '{1}' currently not supported in Mutations"
 
 
-MutationResult = Union[int, None, Tuple[Model, bool], Model]
+MutationResult = Union[int, None, tuple[Model, bool], Model]
 
 
 class Mutation(NamedTuple):
-    qs: Union[QuerySet, Manager]
+    qs: QuerySet | Manager
     method_name: str
-    kwargs: Dict[str, Any]
+    kwargs: dict[str, Any]
     error_msg: str = None
 
 
-MutationList = List[Mutation]
+MutationList = list[Mutation]
 
 
 class MutationError(Exception):

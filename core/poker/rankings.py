@@ -65,7 +65,7 @@ def handrank_encoding(hand):
         raise Exception('Need 5 cards to encode')
 
     # first look for pairs
-    rankset = set(card.rank for card in hand)
+    rankset = {card.rank for card in hand}
     buckets = [
         (rank, sum(card.rank == rank for card in hand))
         for rank in rankset

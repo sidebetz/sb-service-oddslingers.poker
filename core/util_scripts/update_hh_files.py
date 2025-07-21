@@ -10,7 +10,7 @@ data_fns = [
 
 
 for fn in data_fns:
-    with open(fn, 'r') as f:
+    with open(fn) as f:
         data = json.load(f)
 
     for hand in data['hands']:

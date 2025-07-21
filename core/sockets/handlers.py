@@ -36,7 +36,7 @@ class RoutedSocketHandler(JsonWebsocketConsumer):
     socket: Socket = None
 
     # add shared handlers you want every websocket to have here:
-    routes: Tuple[Tuple[str, str], ...] = (
+    routes: tuple[tuple[str, str], ...] = (
         # the first parameter is a string for exact matching
         #   against the incoming type key
         # the second parameter is either a function, the string

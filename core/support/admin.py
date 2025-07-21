@@ -38,6 +38,7 @@ def mark_closed(modeladmin, request, queryset):
     queryset.update(status='closed')
 
 
+@admin.register(SupportTicket)
 class SupportTicketAdmin(admin.ModelAdmin):
     list_display = ('short_id', 'opened', 'status', 'subject',
                     'reported_by', 'table', 'source', 'modified',
@@ -109,4 +110,3 @@ class SupportTicketAdmin(admin.ModelAdmin):
 
         return None
 
-admin.site.register(SupportTicket, SupportTicketAdmin)

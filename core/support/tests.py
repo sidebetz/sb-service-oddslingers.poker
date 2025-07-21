@@ -105,16 +105,16 @@ class IncidentTest(BaseSupportTest):
         assert read_settings_info(ticket).get('PID') == settings.PID
 
         # test basic artifact writing and reading
-        with open(os.path.join(ticket.dir, USER_INFO_PATH), 'r') as f:
+        with open(os.path.join(ticket.dir, USER_INFO_PATH)) as f:
             user_info = json.load(f)
             assert user_info == read_user_info(ticket)
             assert ticket.reported_by == self.user
             assert user_info.get('username') == self.user.username
 
-        with open(os.path.join(ticket.dir, NOTES_PATH), 'r') as f:
+        with open(os.path.join(ticket.dir, NOTES_PATH)) as f:
             assert notes in f.read() and notes in read_notes(ticket)
 
-        with open(os.path.join(ticket.dir, TRACEBACK_PATH), 'r') as f:
+        with open(os.path.join(ticket.dir, TRACEBACK_PATH)) as f:
             exc_content = f.read()
             assert e.__class__.__name__ in exc_content, (
                 f'Exception class not present in {ticket.dir}/{TRACEBACK_PATH}'

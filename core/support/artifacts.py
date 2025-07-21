@@ -70,7 +70,7 @@ def copy_file(ticket: SupportTicket, path: str, artifact_path: str):
 
 def save_artifact(ticket: SupportTicket,
                   path: str,
-                  content: Union[str, dict],
+                  content: str | dict,
                   mode: str='w+'):
     """Save str or json blob into a given path in the support ticket's dir"""
     # In the future we may want to log the saved artifacts to the DB or upload
@@ -86,14 +86,14 @@ def save_artifact(ticket: SupportTicket,
         else:
             f.write(f'{content}\n')
 
-def read_artifact(ticket: SupportTicket, path: str) -> Optional[Union[str, dict]]:
+def read_artifact(ticket: SupportTicket, path: str) -> str | dict | None:
     """load a given tickets str or json artifact and return as dict or str"""
     artifact_path = os.path.join(ticket.dir, path)
 
     if not os.path.exists(artifact_path):
         return None
 
-    with open(artifact_path, 'r') as f:
+    with open(artifact_path) as f:
         if path.endswith('.json'):
             return json.load(f)
         else:
@@ -118,7 +118,7 @@ def save_settings_info(ticket: SupportTicket):
     }
     save_artifact(ticket, SETTINGS_INFO_PATH, settings_info)
 
-def read_settings_info(ticket: SupportTicket) -> Optional[dict]:
+def read_settings_info(ticket: SupportTicket) -> dict | None:
     settings_info = read_artifact(ticket, SETTINGS_INFO_PATH)
     if settings_info is None: return None
 
@@ -132,7 +132,7 @@ def read_settings_info(ticket: SupportTicket) -> Optional[dict]:
 def save_notes(ticket: SupportTicket, notes: str):
     save_artifact(ticket, NOTES_PATH, notes)
 
-def read_notes(ticket: SupportTicket) -> Optional[str]:
+def read_notes(ticket: SupportTicket) -> str | None:
     notes = read_artifact(ticket, NOTES_PATH)
     if notes is None: return None
 
@@ -151,7 +151,7 @@ def save_traceback(ticket: SupportTicket, exc: Exception, tb: str=None):
         f'{exc.__class__.__name__}: {exc}\n\n{tb}'
     )
 
-def read_traceback(ticket: SupportTicket) -> Optional[str]:
+def read_traceback(ticket: SupportTicket) -> str | None:
     tb = read_artifact(ticket, TRACEBACK_PATH)
     if tb is None: return None
 
@@ -176,7 +176,7 @@ def save_user_info(ticket: SupportTicket, user: User=None):
             'is_anonymous': True,
         })
 
-def read_user_info(ticket: SupportTicket) -> Optional[dict]:
+def read_user_info(ticket: SupportTicket) -> dict | None:
     user_info = read_artifact(ticket, USER_INFO_PATH)
     if user_info is None: return None
 
@@ -193,7 +193,7 @@ def save_table_info(ticket: SupportTicket, table: PokerTable):
         'board_str',
     ))
 
-def read_table_info(ticket: SupportTicket) -> Optional[dict]:
+def read_table_info(ticket: SupportTicket) -> dict | None:
     table_info = read_artifact(ticket, TABLE_INFO_PATH)
     if table_info is None: return None
 
@@ -224,7 +224,7 @@ def assemble_tablebeat_info(table: PokerTable, queued_message: dict=None) -> dic
 def save_tablebeat_info(ticket: SupportTicket, tablebeat_info: dict):
     save_artifact(ticket, TABLEBEAT_INFO_PATH, tablebeat_info)
 
-def read_tablebeat_info(ticket: SupportTicket) -> Optional[dict]:
+def read_tablebeat_info(ticket: SupportTicket) -> dict | None:
     tablebeat_info = read_artifact(ticket, TABLEBEAT_INFO_PATH)
     if tablebeat_info is None: return None
 
@@ -235,7 +235,7 @@ def read_tablebeat_info(ticket: SupportTicket) -> Optional[dict]:
 
 
 ### Botbeat info
-def assemble_botbeat_info(queued_tables: List[PokerTable],
+def assemble_botbeat_info(queued_tables: list[PokerTable],
                           failing_table: PokerTable,
                           stupid: bool) -> dict:
     from poker.tablebeat import tablebeat_pid
@@ -255,7 +255,7 @@ def assemble_botbeat_info(queued_tables: List[PokerTable],
 def save_botbeat_info(ticket: SupportTicket, botbeat_info: dict):
     save_artifact(ticket, BOTBEAT_INFO_PATH, botbeat_info)
 
-def read_botbeat_info(ticket: SupportTicket) -> Optional[dict]:
+def read_botbeat_info(ticket: SupportTicket) -> dict | None:
     botbeat_info = read_artifact(ticket, BOTBEAT_INFO_PATH)
     if botbeat_info is None: return None
 
@@ -278,7 +278,7 @@ def save_hand_history(ticket: SupportTicket, table: PokerTable):
                                 current_hand_only=False)
 
 
-def read_hand_history(ticket: SupportTicket) -> Optional[dict]:
+def read_hand_history(ticket: SupportTicket) -> dict | None:
     hand_history = read_artifact(ticket, FULL_HAND_HISTORY_PATH)
     if hand_history is None: return None
 
@@ -308,7 +308,7 @@ def read_hh_to_replayer(ticket: SupportTicket,
 def save_frontend_log(ticket: SupportTicket, frontend_log: dict):
     save_artifact(ticket, FRONTEND_LOG_PATH, frontend_log)
 
-def read_frontend_log(ticket: SupportTicket) -> Optional[dict]:
+def read_frontend_log(ticket: SupportTicket) -> dict | None:
     frontend_log = read_artifact(ticket, FRONTEND_LOG_PATH)
     if frontend_log is None: return None
 
@@ -345,7 +345,7 @@ def save_botbeat_log(ticket: SupportTicket):
 def save_communication_log(ticket: SupportTicket, message: dict):
     save_artifact(ticket, COMMUNICATION_LOG_PATH, message, 'a+')
 
-def read_communication_log(ticket: SupportTicket) -> List[dict]:
+def read_communication_log(ticket: SupportTicket) -> list[dict]:
     comms_strs = read_artifact(ticket, COMMUNICATION_LOG_PATH)
     assert comms_strs is None or isinstance(comms_strs, str)
 

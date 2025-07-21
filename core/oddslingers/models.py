@@ -199,7 +199,7 @@ class User(AbstractUser, BaseModel):
         )
 
     @property
-    def last_url(self) -> Optional[str]:
+    def last_url(self) -> str | None:
         try:
             return self.usersession_set\
                        .only('last_url')\
@@ -355,7 +355,7 @@ class UserSession(BaseModel):
                 'expire_date': expire_date,
                 'ip': request.META.get('REMOTE_ADDR', '')[:63] or None,
                 'user_agent': \
-                    request.META.get('HTTP_USER_AGENT', '')[:255] \
+                    request.headers.get('user-agent', '')[:255] \
                     or None,
                 'last_url': request.path[:255],
             }
@@ -367,7 +367,7 @@ class UserSession(BaseModel):
         return self.session.socket_set
 
     @cached_property
-    def username(self) -> Optional[str]:
+    def username(self) -> str | None:
         return self.user.username if self.user else None
 
     @cached_property
@@ -375,7 +375,7 @@ class UserSession(BaseModel):
         return device(self.user_agent) if self.user_agent else 'Unknown'
 
     @cached_property
-    def location_json(self) -> Optional[dict]:
+    def location_json(self) -> dict | None:
         try:
             g = GeoIP2()
             g.country('8.8.8.8')
@@ -403,7 +403,7 @@ class UserSession(BaseModel):
             return None
 
     @cached_property
-    def location(self) -> Optional[str]:
+    def location(self) -> str | None:
         if self.ip == '127.0.0.1':
             return "There's no place like home"
 
@@ -418,7 +418,7 @@ class UserSession(BaseModel):
         ) or 'Unknown'
 
     @cached_property
-    def session_store(self) -> Optional[SessionStore]:
+    def session_store(self) -> SessionStore | None:
         """
         use this for writes instead of self.session, as it properly updates
         both the Session and cached session used by sessions.cached_db
@@ -454,7 +454,7 @@ class UserBalance(BaseModel):
 
     class Meta:
         unique_together = (('user', 'season'),)
-        index_together = (('user', 'season'),)
+        indexes = [models.Index(fields=("user", "season"))]
 
 
 class UserStats(BaseModel):
@@ -476,7 +476,7 @@ class UserStats(BaseModel):
 
     class Meta:
         unique_together = (('user', 'season'),)
-        index_together = (('user', 'season'),)
+        indexes = [models.Index(fields=("user", "season"))]
 
 
 def user_logged_in_handler(sender, request, user, **kwargs):

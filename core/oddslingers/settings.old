@@ -15,9 +15,7 @@ https://github.com/monadical-sas/oddslingers.poker/wiki/Configuration
 import os
 import sys
 import getpass
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
+import raven
 
 from time import time
 
@@ -48,22 +46,7 @@ START_TIME = time()
 IS_TESTING = len(sys.argv) > 1 and sys.argv[1].lower() == "test"
 IS_MIGRATING = len(sys.argv) > 1 and sys.argv[1].lower() == "migrate"
 IS_SHELL = len(sys.argv) > 1 and sys.argv[1].lower() == 'shell_plus'
-
-# Updated for Django 4.2+ - direct git sha detection
-def get_git_sha():
-    """Get git SHA from environment or git command"""
-    git_sha = os.getenv('GIT_SHA')
-    if git_sha:
-        return git_sha.strip()
-    try:
-        import subprocess
-        result = subprocess.run(['git', 'rev-parse', 'HEAD'], 
-                              capture_output=True, text=True, cwd=REPO_DIR)
-        return result.stdout.strip() if result.returncode == 0 else 'unknown'
-    except Exception:
-        return 'unknown'
-
-GIT_SHA = get_git_sha()
+GIT_SHA = raven.fetch_git_sha(REPO_DIR).strip()
 PY_TYPE = sys.implementation.name        # "cpython" or "pypy"
 if hasattr(sys.stdout, 'isatty'):
     CLI_COLOR = sys.stdout.isatty()
@@ -85,9 +68,6 @@ SECRET_KEY = _PLACEHOLDER_FOR_UNSET
 STATIC_URL = '/static/'
 SITE_ID = 1
 WSGI_APPLICATION = 'oddslingers.wsgi.application'
-
-# Updated for Django 4.2+
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ENABLE_DEBUG_TOOLBAR = False
 ENABLE_DEBUG_TOOLBAR_FOR_STAFF = True
@@ -155,10 +135,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 LOGIN_URL = '/accounts/login/'
 LOGOUT_REDIRECT_URL = '/'
-
-# Updated for Django 4.2+ - new security settings
-SECURE_REFERRER_POLICY = 'same-origin'
-SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 
 
 ################################################################################
@@ -325,7 +301,7 @@ DATA_DIRS = [
 ]
 
 ################################################################################
-### Django Core Setup
+### Djano Core Setup
 ################################################################################
 BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}'
 
@@ -351,7 +327,7 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount.providers.twitch',
     # 'allauth.socialaccount.providers.coinbase',
     'hijack',
-    #'compat',
+    'compat',
 
     'django_dramatiq',
     'django_extensions',
@@ -456,17 +432,15 @@ CACHES = {
         }
     }
 }
-
-# Updated for Django 4.2+ - Channel layers configuration
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'ROUTING': 'ui.urls.socket_routing',
         'CONFIG': {
-            "hosts": [REDIS_SOCKET],
+            'hosts': [REDIS_SOCKET],
         },
     },
 }
-
 DRAMATIQ_TASKS_DATABASE = None  # set to 'default' to commit tasks to DB & redis
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
@@ -485,35 +459,13 @@ DRAMATIQ_BROKER = {
     ]
 }
 
-# Updated Sentry configuration for Django 4.2+
 SENTRY_JS_URL = f'https://{SENTRY_DSN_KEY}@sentry.io/{SENTRY_PROJECT_ID}'
 SENTRY_DSN_FULL = f'https://{SENTRY_DSN_KEY}:{SENTRY_DSN_SECRET}@sentry.io/{SENTRY_PROJECT_ID}'
-
-def initialize_sentry():
-    if ENABLE_SENTRY and SENTRY_DSN_KEY != _PLACEHOLDER_FOR_UNSET:
-        sentry_sdk.init(
-            dsn=SENTRY_DSN_FULL,
-            integrations=[
-                DjangoIntegration(
-                    transaction_style='url',
-                    middleware_spans=True,
-                    signals_spans=True,
-                ),
-                RedisIntegration(),
-            ],
-            traces_sample_rate=0.1,
-            send_default_pii=False,
-            release=GIT_SHA,
-            environment=ODDSLINGERS_ENV,
-        )
-
-# Deprecated RAVEN_CONFIG for legacy compatibility
 RAVEN_CONFIG = {
-    'dsn': SENTRY_DSN_FULL if ENABLE_SENTRY else None,
+    'dsn': SENTRY_DSN_FULL,
     'release': GIT_SHA,
     'environment': ODDSLINGERS_ENV,
 }
-
 PIWIK_SETUP = {
     'tracked_domain': '*.oddslingers.com',
     'base': 'https://nicksweeting.com/piwik/',
@@ -527,8 +479,17 @@ ANYMAIL = {
 DEFAULT_FROM_EMAIL = f'support@{DEFAULT_HOST}'
 SERVER_EMAIL = f'server@{DEFAULT_HOST}'
 
-# Initialize Sentry if enabled
-initialize_sentry()
+if ENABLE_SENTRY:
+    # uncomment to log 404 errors to sentry
+    # MIDDLEWARE = [
+    #     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
+    # ] + MIDDLEWARE
+
+    INSTALLED_APPS = [
+        'raven.contrib.django.raven_compat',
+    ] + INSTALLED_APPS
+else:
+    RAVEN_CONFIG['dsn'] = None
 
 if PY_TYPE == 'pypy':
     # Use psycopg2cffi instead of psycopg2 when run with pypy
@@ -600,6 +561,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'none' if DEBUG else 'verbose',
         },
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'tags': {'ODDSLINGERS_ENV': ODDSLINGERS_ENV, 'DEBUG': DEBUG},
+        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
@@ -613,42 +579,46 @@ LOGGING = {
         },
         'heartbeat': {
             'level': 'INFO',
-            'handlers': ['console'],
+            'handlers': ['sentry', 'console'] if ENABLE_SENTRY else ['console'],
             'propagate': True,
             'formatter': 'none',
         },
         'poker': {
             'level': 'INFO',
-            'handlers': ['console'],
+            'handlers': ['sentry', 'console'] if ENABLE_SENTRY else ['console'],
             'propagate': True,
             'formatter': 'none',
         },
         'robots': {
             'level': 'INFO',
-            'handlers': ['console'],
+            'handlers': ['sentry', 'console'] if ENABLE_SENTRY else ['console'],
             'propagate': True,
             'formatter': 'none',
         },
         'command': {
             'level': 'INFO',
-            'handlers': ['console'],
+            'handlers': ['sentry', 'console'] if ENABLE_SENTRY else ['console'],
             'propagate': True,
             'formatter': 'none',
         },
         'django': {
             'level': 'INFO',
-            'handlers': ['console'],
+            'handlers': ['sentry', 'console'] if ENABLE_SENTRY else ['console'],
             'propagate': True,
         },
         'sockets': {
             'level': 'INFO',
-            'handlers': ['console'],
+            'handlers': ['sentry', 'console'] if ENABLE_SENTRY else ['console'],
             'propagate': True,
         },
         'root': {
             'level': 'INFO',
-            'handlers': ['console'],
+            'handlers': ['sentry', 'console'] if ENABLE_SENTRY else ['console'],
             'propagate': True,
+        },
+        'raven': {
+            'level': 'INFO',
+            'handlers': ['sentry'] if ENABLE_SENTRY else [],
         },
     },
 }

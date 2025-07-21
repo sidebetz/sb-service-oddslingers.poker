@@ -16,7 +16,8 @@ from time import time
 
 from dotenv import dotenv_values
 
-from typing import Optional, Iterable, Tuple, Union
+from typing import Optional, Tuple, Union
+from collections.abc import Iterable
 
 
 ### Environment and Config Management
@@ -95,7 +96,7 @@ def load_env_settings(dotenv_path: str=None, env: dict=None, defaults: dict=None
     return unique_env_settings(env_values, defaults)
 
 
-def get_setting_source(sources: Iterable[Tuple[str, dict]], key: str) -> str:
+def get_setting_source(sources: Iterable[tuple[str, dict]], key: str) -> str:
     """determine which file a specific setting was loaded from"""
     for source_name, settings in reversed(sources):
         if key in settings:
@@ -343,7 +344,7 @@ def matching_pids(match_func) -> Iterable[int]:
 
 
 def find_process(mgmt_command: str, *args,
-                 exact=False, exclude_pid=None) -> Optional[int]:
+                 exact=False, exclude_pid=None) -> int | None:
     """find the pid for a given management command thats running"""
 
     def pid_matches(proc, cmd):

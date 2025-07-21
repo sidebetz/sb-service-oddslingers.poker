@@ -57,7 +57,7 @@ def ticket_from_tablebeat_exception(table: PokerTable,
     return ticket
 
 
-def ticket_from_botbeat_exception(table: Optional[PokerTable],
+def ticket_from_botbeat_exception(table: PokerTable | None,
                                   exc: Exception,
                                   tb: str=None,
                                   botbeat_info: dict=None) -> SupportTicket:

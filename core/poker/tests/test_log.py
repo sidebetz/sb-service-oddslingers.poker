@@ -29,7 +29,7 @@ class JSONLogTest(GenericTableTest):
         self.log.save_to_file('JSONLogTest.tmp')
 
     def tearDown(self):
-        super(JSONLogTest, self).tearDown()
+        super().tearDown()
         remove('JSONLogTest.tmp')
 
 
@@ -44,7 +44,7 @@ class DBLogTest(GenericTableTest):
         self.controller.commit()
 
     def tearDown(self):
-        super(DBLogTest, self).tearDown()
+        super().tearDown()
         HandHistoryEvent.objects.all().delete()
         HandHistoryAction.objects.all().delete()
         HandHistory.objects.all().delete()
@@ -307,7 +307,7 @@ class ReplayerTest(GenericTableTest):
         self.log = self.controller.log
 
     def tearDown(self):
-        super(ReplayerTest, self).tearDown()
+        super().tearDown()
         HandHistoryEvent.objects.all().delete()
         HandHistoryAction.objects.all().delete()
         HandHistory.objects.all().delete()
@@ -338,7 +338,7 @@ class EventReplayerFromHHFileTest(ReplayerTest):
 
         self.filename = "temp.json"
         self.controller.log.save_to_file(self.filename, player='all')
-        with open(self.filename, 'r') as f:
+        with open(self.filename) as f:
             hh = json.load(f)
 
         replayer = EventReplayer(hh)

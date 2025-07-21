@@ -217,7 +217,7 @@ class GenericTableTest(TestCase):
 
 class TableWithCardsTest(GenericTableTest):
     def setUp(self):
-        super(TableWithCardsTest, self).setUp()
+        super().setUp()
         card_strs = ['2h', '2s', '3h', '3s', '4h', '4s', '4c', '4d']
         cards_to_deal = [Card(c) for c in card_strs]
         self.pirate_player.dispatch('deal', card=cards_to_deal[0])
@@ -435,7 +435,7 @@ class FivePlayerTableTest(GenericTableTest):
             3: cowpig       (100)
             4: alexeimartov (400)
         '''
-        super(FivePlayerTableTest, self).setUp()
+        super().setUp()
 
         self.alexeimartov = get_user_model().objects.create_user(
             username='alexeimartov',

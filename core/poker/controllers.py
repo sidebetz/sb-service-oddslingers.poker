@@ -40,15 +40,15 @@ from sidebets.subscribers import SidebetSubscriber
 logger = logging.getLogger('poker')
 
 EventSubject = Union[PokerTable, Player, Freezeout, str]
-EventArgs = Dict[str, Union[str, Decimal, Optional[int]]]
-EventTuple = Tuple[EventSubject, Event, EventArgs]
-EventList = List[EventTuple]
+EventArgs = dict[str, Union[str, Decimal, Optional[int]]]
+EventTuple = tuple[EventSubject, Event, EventArgs]
+EventList = list[EventTuple]
 
-ActionTuple = Tuple[Player, Action, Dict]
-ActionList = List[ActionTuple]
+ActionTuple = tuple[Player, Action, dict]
+ActionList = list[ActionTuple]
 
 # TODO: have all function that dispatch return (this or an EventList)
-DispatchRecord = Tuple[ActionList, EventList]
+DispatchRecord = tuple[ActionList, EventList]
 
 
 class GameController:
@@ -60,7 +60,7 @@ class GameController:
     # you must set these in the __init__ when you inherit from GameController
     accessor: PokerAccessor = None
     log: HandHistoryLog = None
-    subscribers: List[Subscriber] = None
+    subscribers: list[Subscriber] = None
 
     # this should be set statically (according to the controller type)
     #   to something from poker.constants
@@ -164,7 +164,7 @@ class GameController:
         if action_name.lower() == 'latency_test':
             self.test_latency(kwargs)
 
-    def player_dispatch(self, action_name, **kwargs) -> Tuple[Player, bool]:
+    def player_dispatch(self, action_name, **kwargs) -> tuple[Player, bool]:
         player = self.accessor.player_by_player_id(kwargs['player_id'])
 
         try:
@@ -297,9 +297,9 @@ class HoldemController(GameController):
 
     def __init__(self,
                  table: PokerTable,
-                 players: List[Player]=None,
+                 players: list[Player]=None,
                  log: HandHistoryLog=None,
-                 subscribers: List[Subscriber]=None,
+                 subscribers: list[Subscriber]=None,
                  verbose: bool=False,
                  broadcast: bool=True):
 
@@ -2214,7 +2214,7 @@ class BountyFreezeoutController(FreezeoutController, BountyController):
     pass
 
 
-def controller_type_for_table(table: PokerTable) -> Type[GameController]:
+def controller_type_for_table(table: PokerTable) -> type[GameController]:
     if table.table_type == NL_HOLDEM and table.tournament is None:
         return HoldemController
 

@@ -19,10 +19,10 @@ class Command(BaseCommand):
         connection.open()
 
         try:
-            with open(f'{content_file}.html', 'r') as f:
+            with open(f'{content_file}.html') as f:
                 html_email = f.read()
 
-            with open(f'{content_file}.txt', 'r') as f:
+            with open(f'{content_file}.txt') as f:
                 txt_email = f.read()
         except FileNotFoundError:
             print('Content must be the filename of the html & txt newsletters '
@@ -31,7 +31,7 @@ class Command(BaseCommand):
             raise
 
         sent = 0
-        with open(recipients_file, 'r') as f:
+        with open(recipients_file) as f:
             for addr in f.read().split('\n'):
                 if '@' not in addr or '.' not in addr.rsplit('@', 1)[-1]:
                     continue

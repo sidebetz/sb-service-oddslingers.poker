@@ -166,7 +166,7 @@ def featured_game() -> GameController:
     return controller_for_table(table)
 
 
-def fuzzy_get_table(id: Union[UUID, str], only=()) -> PokerTable:
+def fuzzy_get_table(id: UUID | str, only=()) -> PokerTable:
     try:
         qs = PokerTable.objects
         if only:
@@ -186,7 +186,7 @@ def fuzzy_get_table(id: Union[UUID, str], only=()) -> PokerTable:
         raise KeyError('Table with given id not found.')
 
 
-def fuzzy_get_game(id: Union[UUID, str]) -> GameController:
+def fuzzy_get_game(id: UUID | str) -> GameController:
     return controller_for_table(fuzzy_get_table(id), verbose=False)
 
 
@@ -240,7 +240,7 @@ def create_bot_player(table: PokerTable,
     return bot_player
 
 
-def robot_names_for_tournament(tournament: Freezeout) -> List[str]:
+def robot_names_for_tournament(tournament: Freezeout) -> list[str]:
     return [
         username
         for username, personality in PERSONALITIES.items()
@@ -249,7 +249,7 @@ def robot_names_for_tournament(tournament: Freezeout) -> List[str]:
     ]
 
 
-def robot_names_for_table(table: PokerTable) -> List[str]:
+def robot_names_for_table(table: PokerTable) -> list[str]:
     return [
         username
         for username, personality in PERSONALITIES.items()
@@ -258,7 +258,7 @@ def robot_names_for_table(table: PokerTable) -> List[str]:
     ]
 
 
-def get_n_random_bot_names(game: Union[PokerTable, Freezeout], n: int) -> List[str]:
+def get_n_random_bot_names(game: PokerTable | Freezeout, n: int) -> list[str]:
     if type(game) == Freezeout:
         robot_names = robot_names_for_tournament(game)
     else:
@@ -266,7 +266,7 @@ def get_n_random_bot_names(game: Union[PokerTable, Freezeout], n: int) -> List[s
     return random.sample(robot_names, n)
 
 
-def create_n_random_bot_players(table: PokerTable, n: int) -> List[Player]:
+def create_n_random_bot_players(table: PokerTable, n: int) -> list[Player]:
     bot_names = get_n_random_bot_names(table, n)
     positions = random.sample(range(table.num_seats), n)
     players = []
@@ -366,7 +366,7 @@ def start_tournament(tournament: PokerTournament) -> PokerTable:
     return table
 
 
-def make_new_bot_games() -> List[PokerTable]:
+def make_new_bot_games() -> list[PokerTable]:
     """
     Create system_created_games as needed for each variant and bb combo
     """
@@ -410,7 +410,7 @@ def make_new_bot_games() -> List[PokerTable]:
 
 
 def make_bot_game(bb: int, table_type: str,
-                  existing_tables: List[PokerTable]=None) -> GameController:
+                  existing_tables: list[PokerTable]=None) -> GameController:
     sb = bb / 2
     n_bots = random.choice([2, 3])
 

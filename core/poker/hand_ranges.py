@@ -50,8 +50,7 @@ class Hand:
         return len(self.cards)
 
     def __iter__(self):
-        for card in self.cards:
-            yield card
+        yield from self.cards
 
     def __repr__(self):
         return f"<Hand({self}) at {hex(id(self))}>"
@@ -89,7 +88,7 @@ class HandRange:
             self.hands = [Hand(hand) for hand in hands.hands]
             self.hand_values = hands.hand_values
         else:
-            self.hands = list(set(Hand(hand) for hand in hands))
+            self.hands = list({Hand(hand) for hand in hands})
 
         self.hand_values = hand_values
 
@@ -119,8 +118,7 @@ class HandRange:
         return len(self.hands)
 
     def __iter__(self):
-        for hand in self.hands:
-            yield hand
+        yield from self.hands
 
     def __repr__(self):
         return f'<HandRange {self[0]}:{self[-1]} -- '\
@@ -174,8 +172,8 @@ def pruned(handrange, keep_ratio=1, known_cards=None, min_value=0):
     if known_cards is not None:
         if isinstance(known_cards, str):
             known_cards = Hand(known_cards)
-        remove = set(card for card in known_cards)
-        assert set(isinstance(card, Card) for card in remove) == {True}
+        remove = {card for card in known_cards}
+        assert {isinstance(card, Card) for card in remove} == {True}
         handrange = HandRange(
             [
                 hand for hand in handrange

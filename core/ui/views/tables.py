@@ -53,7 +53,7 @@ class Tables(PublicReactView):
             execute_mutations(
                 check_xss_swearing(request.user, request.GET)
             )
-        return super(Tables, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     @require_login
     def post(self, request, autostart_tablebeat=True):

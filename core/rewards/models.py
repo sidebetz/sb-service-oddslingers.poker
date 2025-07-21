@@ -26,7 +26,7 @@ class Badge(BaseModel):
     )
 
     class Meta:
-        index_together = (('user', 'season'),)
+        indexes = [models.Index(fields=("user", "season"))]
 
     @property
     def description(self):

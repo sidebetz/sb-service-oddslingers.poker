@@ -154,7 +154,7 @@ class TestUserProfileBadges(FrontendTest):
 
 class ActionReplayerTestWithUsers(TestCase):
     def setUp(self, filename='no_events.json', **kwargs):
-        with open(filename, 'r') as f:
+        with open(filename) as f:
             self.hh = json.load(f)
 
         self.replayer = ActionReplayer(self.hh,

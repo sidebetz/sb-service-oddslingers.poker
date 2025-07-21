@@ -423,7 +423,7 @@ class UserProfile(PublicReactView):
         except User.DoesNotExist:
             safe_query = sanitize_html(username, strip=True, allow_safe=False)
             return redirect(f'{reverse("Leaderboard")}?search={safe_query}')
-        return super(UserProfile, self).get(request, username)
+        return super().get(request, username)
 
     def props(self, request, username):
         user = self.user

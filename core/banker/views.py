@@ -15,7 +15,7 @@ from poker.models import PokerTable, Freezeout
 
 
 def get_timing_kwargs(start_date: datetime=None,
-                      end_date: datetime=None) -> Dict:
+                      end_date: datetime=None) -> dict:
     timing_kwargs = {}
     if start_date is not None:
         timing_kwargs['timestamp__gte'] = start_date
@@ -127,7 +127,7 @@ def balance(obj: BaseModel, other_obj: BaseModel=None,
 
 
 def create_transfer(src: BaseModel, dst: BaseModel,
-                    amt: int, notes=None) -> List[BaseModel]:
+                    amt: int, notes=None) -> list[BaseModel]:
     objs_to_save = []
     src_is_user = isinstance(src, get_user_model())
     dst_is_user = isinstance(dst, get_user_model())
@@ -154,7 +154,7 @@ def update_user_balance(user: User, amt: int, is_dst=False) -> UserBalance:
     return user_balance
 
 
-def buy_chips(user: User, amt: int, notes='buy-in') -> List[BaseModel]:
+def buy_chips(user: User, amt: int, notes='buy-in') -> list[BaseModel]:
     cashier = Cashier.load()
     return create_transfer(cashier, user, amt, notes)
 
@@ -163,7 +163,7 @@ def sell_chips(user, amt, notes='sell-out'):
     return create_transfer(user, cashier, amt, notes)
 
 def transfer_chips(from_user: User,
-                   to_user: User, amt: int) -> List[BaseModel]:
+                   to_user: User, amt: int) -> list[BaseModel]:
     return create_transfer(from_user, to_user, amt, 'chip-transfer')
 
 def cashier_balance(cached=False):

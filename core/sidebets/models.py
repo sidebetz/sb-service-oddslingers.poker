@@ -43,7 +43,7 @@ class Sidebet(BaseModel):
     from_rebuy = models.BooleanField(default=False)
 
     class Meta:
-        index_together = (('table', 'status'),)
+        indexes = [models.Index(fields=("table", "status"))]
 
     @property
     def player_stack(self):

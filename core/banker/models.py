@@ -59,7 +59,7 @@ class BalanceTransfer(BaseModel):
     notes = models.TextField(blank=True, null=True)
 
     class Meta:
-        index_together = (('source_type', 'dest_type', 'timestamp'))
+        indexes = [models.Index(fields=("source_type", "dest_type", "timestamp"))]
 
     def __str__(self):
         return f'{self.source} -> {self.dest} {self.amt} ({self.notes})'

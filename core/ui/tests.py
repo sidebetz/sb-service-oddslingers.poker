@@ -135,7 +135,7 @@ class TestTable(SimpleViewTest):
                                       autostart_tablebeat=False)
 
         assert homepage_resp.__class__.__name__ == 'HttpResponseRedirect'
-        assert homepage_resp.url == '/table/{}/'.format(self.table.short_id)
+        assert homepage_resp.url == f'/table/{self.table.short_id}/'
 
     def tearDown(self):
         super().tearDown()

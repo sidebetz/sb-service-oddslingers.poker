@@ -79,7 +79,7 @@ class NotificationSubscriber(Subscriber):
             self.queue_notification(**kwargs)
 
     def queue_notification(self, notification_type: str, msg: str,
-                           player: Union[Player, str]=None,
+                           player: Player | str=None,
                            spectator: User=None):
         receiver = player or spectator or 'all'
         self.notifications[receiver].append({

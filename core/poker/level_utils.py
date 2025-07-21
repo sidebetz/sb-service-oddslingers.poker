@@ -19,7 +19,7 @@ from oddslingers.mutations import MutationList, increase_games_level
 
 
 def update_levels(user: User, earned_amt: int=None,
-                  plus_amt: int=None) -> Tuple[MutationList, bool]:
+                  plus_amt: int=None) -> tuple[MutationList, bool]:
     mutations = []
     leveledup = False
 
@@ -66,7 +66,7 @@ def update_levels(user: User, earned_amt: int=None,
     return mutations, leveledup
 
 
-def levelup_bonuses(user: User, old_lvl, new_lvl) -> List[BaseModel]:
+def levelup_bonuses(user: User, old_lvl, new_lvl) -> list[BaseModel]:
     mutations = []
     for lvl in CASH_GAME_BBS[::-1]:
         if old_lvl < lvl <= new_lvl:

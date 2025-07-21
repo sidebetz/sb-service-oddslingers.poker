@@ -40,19 +40,19 @@ def queue_botbeat_dispatch(table_id: str) -> None:
     )
 
 
-def pop_botbeat_dispatch() -> Optional[str]:
+def pop_botbeat_dispatch() -> str | None:
     dispatch = pop_redis_dispatch(settings.REDIS_BOTBEAT_KEY)
     assert dispatch is None or isinstance(dispatch, str)
     return dispatch
 
 
-def peek_botbeat_dispatch() -> Optional[str]:
+def peek_botbeat_dispatch() -> str | None:
     dispatch = peek_redis_dispatch(settings.REDIS_BOTBEAT_KEY)
     assert dispatch is None or isinstance(dispatch, str)
     return dispatch
 
 
-def list_botbeat_dispatch() -> List[str]:
+def list_botbeat_dispatch() -> list[str]:
     return list_redis_dispatch(settings.REDIS_BOTBEAT_KEY)
 
 
@@ -61,7 +61,7 @@ def list_botbeat_dispatch() -> List[str]:
 # name of the management command that calls botbeat_entrypoint
 COMMAND_NAME = 'bot_heartbeat'
 
-def botbeat_pid(exclude_pid: int=None) -> Optional[int]:
+def botbeat_pid(exclude_pid: int=None) -> int | None:
     return find_process(COMMAND_NAME, exclude_pid=exclude_pid)
 
 
@@ -73,7 +73,7 @@ def stop_botbeat(exclude_pid: int=None, block: bool=True) -> bool:
 
 
 def start_botbeat(fork=True, daemonize=True,
-                  share_db=False, verbose=True, stupid=False) -> Optional[int]:
+                  share_db=False, verbose=True, stupid=False) -> int | None:
     stupid = stupid or settings.POKER_AI_STUPID
 
     if settings.IS_TESTING:

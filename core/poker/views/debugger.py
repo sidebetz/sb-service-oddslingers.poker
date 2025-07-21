@@ -91,7 +91,7 @@ def get_replayer_by_filename(filename,
     dump_path = os.path.join(settings.BASE_DIR, 'poker',
                              'tests', 'data', filename)
 
-    return ActionReplayer.from_file(open(dump_path, 'r'),
+    return ActionReplayer.from_file(open(dump_path),
                                     hand_number,
                                     action_idx,
                                     subscriber_types=[AnimationSubscriber],

@@ -36,7 +36,7 @@ class Leaderboard(PublicReactView):
             execute_mutations(
                 check_xss_swearing(request.user, request.GET)
             )
-        return super(Leaderboard, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def props(self, request):
         query = sanitize_html(request.GET.get('search', '').strip())
@@ -139,7 +139,7 @@ def load_leaderboard_cache() -> dict:
     cache_path = os.path.join(settings.CACHES_DIR,
                               settings.LEADERBOARD_CACHE_PATH)
     try:
-        with open(cache_path, 'r') as f:
+        with open(cache_path) as f:
             leaderboard_cache = json.load(f)
     except Exception as e:
         logger.warning(
@@ -150,7 +150,7 @@ def load_leaderboard_cache() -> dict:
             },
         )
         save_leaderboard_cache()
-        with open(cache_path, 'r') as f:
+        with open(cache_path) as f:
             leaderboard_cache = json.load(f)
 
     return leaderboard_cache
@@ -158,8 +158,8 @@ def load_leaderboard_cache() -> dict:
 
 def leaderboard_user_json(user: User,
                           ranking: int,
-                          badge_counts: Dict,
-                          include_tables: bool=True) -> Dict[str, Any]:
+                          badge_counts: dict,
+                          include_tables: bool=True) -> dict[str, Any]:
     recent_winnings = getattr(user, 'recent_winnings', 0)
     return {
         'id': user.id,
@@ -176,7 +176,7 @@ def leaderboard_user_json(user: User,
     }
 
 
-def leaderboard_tables_json(user: User) -> List[Dict[str, Any]]:
+def leaderboard_tables_json(user: User) -> list[dict[str, Any]]:
     leaderboard_expiry = timezone.timedelta(
         days=settings.LEADERBOARD_PAGE_TIME_RANGE
     )

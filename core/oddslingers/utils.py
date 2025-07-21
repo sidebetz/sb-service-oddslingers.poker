@@ -255,7 +255,7 @@ def syntax_highlight(code: str):
         .replace('": ', '"{blue}:{reset} '.format(**ANSI))\
         .replace('}', '{red}}}{reset}'.format(**ANSI))
 
-def get_websocket_action_color(action: Optional[str], content: Optional[dict]):
+def get_websocket_action_color(action: str | None, content: dict | None):
     """get the debug output color for a given websocket action type"""
     if 'LOAD' in action:
         return ANSI['lightblue']
@@ -305,7 +305,7 @@ def debug_print_io(out: bool=True, content: dict=None, unknown: bool=False):
         # 27 is width of "[<] RECV: ACTION_NAME"
         str_summary = str_summary[:term_width - 27]
 
-    message = '{0}: {1}{2}{3}{4}'.format(
+    message = '{}: {}{}{}{}'.format(
         arrow,
         get_websocket_action_color(action, content),
         action.ljust(17),
@@ -322,7 +322,7 @@ def debug_print_info(content: str=None):
     # color-highlight
     symbol = ANSI['lightyellow'] + '[I] INFO'
 
-    message = '{0}: {1}{2}'.format(
+    message = '{}: {}{}'.format(
         symbol,
         content,
         ANSI['reset']
@@ -544,7 +544,7 @@ class MockObject:
 
 class TimeOutException(Exception):
     def __init__(self, message, errors=None, signum=None, frame=None):
-        super(TimeOutException, self).__init__(message)
+        super().__init__(message)
         self.errors = errors or []
         self.signum = signum
         self.frame = frame
@@ -651,7 +651,7 @@ def debug_toolbar_callback(request):
     return False
 
 
-def date_is_in_season(date: datetime, season: Tuple) -> bool:
+def date_is_in_season(date: datetime, season: tuple) -> bool:
     season_start, season_end = season
     return season_start <= date < season_end
 

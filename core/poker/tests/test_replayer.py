@@ -30,7 +30,7 @@ class MockModelsTest(TestCase):
 
 class EventReplayerTest(TestCase):
     def setUp(self, filename='no_events.json', **kwargs):
-        with open(filename, 'r') as f:
+        with open(filename) as f:
             self.hh = json.load(f)
 
         self.replayer = EventReplayer(self.hh, **kwargs)
@@ -41,7 +41,7 @@ class EventReplayerTest(TestCase):
 
 class ActionReplayerTest(TestCase):
     def setUp(self, filename='no_events.json', **kwargs):
-        with open(filename, 'r') as f:
+        with open(filename) as f:
             self.hh = json.load(f)
 
         self.replayer = ActionReplayer(self.hh, **kwargs)
@@ -202,7 +202,7 @@ class TestReplayerConstruction(TestCase):
         self.filename = os.path.join(HH_TEST_PATH, 'a_few_hands.json')
 
     def test_from_file_on_action_replayer(self):
-        with open(self.filename, 'r') as file:
+        with open(self.filename) as file:
             replayer = ActionReplayer.from_file(file, hand_idx=0, logging=True)
 
             assert replayer.current_action()["action"] == "FOLD", \
@@ -230,7 +230,7 @@ class TestReplayerConstruction(TestCase):
                 'Did not moved forward four actions'
 
     def test_from_file_on_event_replayer(self):
-        with open(self.filename, 'r') as file:
+        with open(self.filename) as file:
             replayer = EventReplayer.from_file(file, hand_idx=1, logging=True)
 
             assert replayer.current_event()["event"] == "CHAT", \
@@ -254,7 +254,7 @@ class TestReplayerConstruction(TestCase):
                 "It's not setting the hand_idx as 1"
 
     def test_from_table_on_action_replayer(self):
-        with open(self.filename, 'r') as file:
+        with open(self.filename) as file:
             initial_replayer = ActionReplayer(json_log=json.load(file),
                                               hand_idx=0,
                                               logging=True)
@@ -293,7 +293,7 @@ class TestReplayerConstruction(TestCase):
             )
 
     def test_from_table_on_event_replayer(self):
-        with open(self.filename, 'r') as file:
+        with open(self.filename) as file:
             initial_replayer = EventReplayer(
                 json_log=json.load(file),
                 hand_idx=0,

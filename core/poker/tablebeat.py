@@ -49,17 +49,17 @@ from .heartbeat_utils import (
 def queue_tablebeat_dispatch(table_id: str, action: dict) -> None:
     return queue_redis_dispatch(f'{settings.REDIS_TABLEBEAT_KEY}-{table_id}', action)
 
-def pop_tablebeat_dispatch(table_id: str) -> Optional[dict]:
+def pop_tablebeat_dispatch(table_id: str) -> dict | None:
     dispatch = pop_redis_dispatch(f'{settings.REDIS_TABLEBEAT_KEY}-{table_id}')
     assert dispatch is None or isinstance(dispatch, dict)
     return dispatch
 
-def peek_tablebeat_dispatch(table_id: str) -> Optional[dict]:
+def peek_tablebeat_dispatch(table_id: str) -> dict | None:
     dispatch = peek_redis_dispatch(f'{settings.REDIS_TABLEBEAT_KEY}-{table_id}')
     assert dispatch is None or isinstance(dispatch, dict)
     return dispatch
 
-def list_tablebeat_dispatch(table_id: str) -> List[dict]:
+def list_tablebeat_dispatch(table_id: str) -> list[dict]:
     return list_redis_dispatch(f'{settings.REDIS_TABLEBEAT_KEY}-{table_id}')
 
 ### Heartbeat Process Management
@@ -68,7 +68,7 @@ def list_tablebeat_dispatch(table_id: str) -> List[dict]:
 COMMAND_NAME = 'table_heartbeat'
 
 
-def tablebeat_pid(table: PokerTable, exclude_pid: int=None) -> Optional[int]:
+def tablebeat_pid(table: PokerTable, exclude_pid: int=None) -> int | None:
     return find_process(COMMAND_NAME, table.short_id, exclude_pid=exclude_pid)
 
 
@@ -80,7 +80,7 @@ def stop_tablebeat(table: PokerTable, exclude_pid=None, block=True) -> bool:
 
 
 def start_tablebeat(table: PokerTable, fork=True,
-                    daemonize=True, share_db=False, verbose=True) -> Optional[int]:
+                    daemonize=True, share_db=False, verbose=True) -> int | None:
     """
     start the table heartbeat process which manages timed events
     and bot actions

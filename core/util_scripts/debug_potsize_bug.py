@@ -24,28 +24,28 @@ def examine_pot_changes(log):
 			print(i)
 			print('name\tstack\twagers\tuncollected')
 			for p in acc.active_players():
-				print('{}\t{:<5}\t{}\t{}'.format(p.username[:5], p.stack, p.wagers, p.uncollected_bets))
+				print(f'{p.username[:5]}\t{p.stack:<5}\t{p.wagers}\t{p.uncollected_bets}')
 
 			print('--------------------')
 			uncollected = sum(p.uncollected_bets for p in acc.players)
 			wagers = sum(p.wagers for p in acc.players)
 			stacks = sum(p.stack for p in acc.players)
-			print('total\t{}\t{}\t{}\n'.format(stacks, wagers, uncollected))
+			print(f'total\t{stacks}\t{wagers}\t{uncollected}\n')
 
 			curr_pot = acc.current_pot()
 			print('curr_pot', curr_pot, '\n')
 
 			print('pot_amt\tplayers')
 			for pot, ppl in acc.sidepot_summary(exclude_uncollected_bets=True):
-				print('{:<7}\t{}'.format(pot, ppl))
+				print(f'{pot:<7}\t{ppl}')
 
-			print('\n', 'dead_money: {}'.format(sum(p.dead_money for p in acc.players)), '\n')
+			print('\n', f'dead_money: {sum(p.dead_money for p in acc.players)}', '\n')
 
 			sidepot_total = sum(pot for pot, _ in acc.sidepot_summary(exclude_uncollected_bets=True))
 			print('sidepot_summary total:', sidepot_total)
 
 			print('\nsidepots + uncollected_bets == curr_pot')
-			print('{} + {} == {}'.format(sidepot_total, uncollected, curr_pot))
+			print(f'{sidepot_total} + {uncollected} == {curr_pot}')
 			assertion = curr_pot == sidepot_total + uncollected
 			print(assertion)
 			assert assertion

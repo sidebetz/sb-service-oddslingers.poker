@@ -8,7 +8,7 @@ from .artifacts import read_notes, read_user_info
 User = get_user_model()
 
 
-def support_tickets_for_user(user: User) -> List[dict]:
+def support_tickets_for_user(user: User) -> list[dict]:
     if not user or user.is_anonymous:
         return []
 

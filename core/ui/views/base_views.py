@@ -171,7 +171,7 @@ class PublicReactView(BaseView):
         base_props = {
             'url_name': request.resolver_match.url_name,
             'url': request.build_absolute_uri(),
-            'domain': request.META.get('HTTP_HOST', ''),
+            'domain': request.headers.get('host', ''),
             'view': '.'.join((self.__module__, self.__class__.__name__)),
             'DEBUG': settings.DEBUG,
             # used to tell sentry which release is running on prod

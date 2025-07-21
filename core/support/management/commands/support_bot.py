@@ -18,7 +18,7 @@ There are several commands to use this bot:
 - @support close/open -> To close or open a given support ticket
 '''
 
-class SupportBotHandler(object):
+class SupportBotHandler:
     META = {
         'name': 'Support Ticket',
         'description': 'Relays Support Ticket communication to Zulip',
@@ -27,12 +27,12 @@ class SupportBotHandler(object):
     def usage(self) -> str:
         return USAGE
 
-    def handle_message(self, message: Dict[str, str], bot_handler: Any) -> None:
+    def handle_message(self, message: dict[str, str], bot_handler: Any) -> None:
         try:
             bot_response = do_support_action(message)
             bot_handler.send_reply(message, bot_response)
         except Exception as e:
-            bot_handler.send_reply('Error. {}.'.format(e), bot_response)
+            bot_handler.send_reply(f'Error. {e}.', bot_response)
 
 
 handler_class = SupportBotHandler
@@ -58,7 +58,7 @@ class Command(BaseCommand):
             raise Exception('Not launching because Support Bot is disabled.')
 
 
-def do_support_action(message: Dict[str, str]) -> str:
+def do_support_action(message: dict[str, str]) -> str:
     required_keys = {'type', 'display_recipient', 'subject', 'content', 'sender_email', 'timestamp'}
     if not required_keys.issubset(message):
         return 'Can not process your request: Missing data'
@@ -108,7 +108,7 @@ def set_ticket_status(ticket: SupportTicket, status: str):
     ticket.status = status
     ticket.save()
 
-def misc_action(message: Dict[str, str]) -> str:
+def misc_action(message: dict[str, str]) -> str:
     import random
     from datetime import datetime
     n = datetime.now()

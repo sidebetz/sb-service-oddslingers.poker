@@ -42,7 +42,7 @@ def queue_redis_dispatch(key: str, dispatch: DispatchValue) -> None:
 
 
 def pop_redis_dispatch(key: str,
-                       timeout: int=0) -> Optional[DispatchValue]:
+                       timeout: int=0) -> DispatchValue | None:
     """pop a json dict off the queue identified by the given key"""
     timeout = timeout or settings.HEARTBEAT_POLL
     dispatch = redis_queue.blpop(key, timeout=timeout)
@@ -54,7 +54,7 @@ def pop_redis_dispatch(key: str,
 
 
 def peek_redis_dispatch(key: str,
-                        timeout: int=0) -> Optional[DispatchValue]:
+                        timeout: int=0) -> DispatchValue | None:
     """peek at the top of a queue identified by the given key"""
     timeout = timeout or settings.HEARTBEAT_POLL
     dispatch = redis_queue.blpop(key, timeout=timeout)
@@ -66,7 +66,7 @@ def peek_redis_dispatch(key: str,
     return None
 
 
-def list_redis_dispatch(key: str) -> List[DispatchValue]:
+def list_redis_dispatch(key: str) -> list[DispatchValue]:
     """get the list of all values in the queue identified by the given key"""
     vals = redis_queue.lrange(key, 0, -1)
     if not vals:

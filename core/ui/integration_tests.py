@@ -56,7 +56,7 @@ class TestBasics(unittest.TestCase):
         resp = requests.get(BASE_URL + '/?props_json=1', timeout=TIMEOUT, verify=VERIFY_SSL).json()
 
         assert resp['GIT_SHA'] == settings.GIT_SHA, (
-            ('The host you are testing {0} is running a different version of the codebase from your integration tests ({1} vs {2}).\n  '
+            ('The host you are testing {} is running a different version of the codebase from your integration tests ({} vs {}).\n  '
              'Is a stale version getting cached, or are you on a different branch from the target host?\n  '
              ' (runserver must be fully restarted in order for the GIT_SHA to reflect changes').format(
                 BASE_URL,
@@ -110,7 +110,7 @@ class TestRequestLoad(unittest.TestCase):
         )
 
         assert all(resp.status_code == 200 for resp in responses), \
-            'Chips image failed to respond in {} seconds when {} requests were sent simultaneously.'.format(timeout, num_requests)
+            f'Chips image failed to respond in {timeout} seconds when {num_requests} requests were sent simultaneously.'
 
         # print('\nGot {} concurrent responses for {}'.format(num_requests, url))
 
@@ -135,7 +135,7 @@ class TestRequestLoad(unittest.TestCase):
         )
 
         assert all(resp.status_code == 200 for resp in responses), \
-            'About page failed to respond in {} seconds when {} requests were sent simultaneously.'.format(timeout, num_requests)
+            f'About page failed to respond in {timeout} seconds when {num_requests} requests were sent simultaneously.'
 
         # print('\nGot {}  concurrent responses for {}'.format(num_requests, url))
 
@@ -161,7 +161,7 @@ class TestRequestLoad(unittest.TestCase):
         )
 
         assert all(resp.status_code == 200 for resp in responses), \
-            'Homepage failed to respond in {} seconds when {} requests were sent simultaneously.'.format(timeout, num_requests)
+            f'Homepage failed to respond in {timeout} seconds when {num_requests} requests were sent simultaneously.'
 
         # print('\nGot {}  concurrent responses for {}'.format(num_requests, url))
 

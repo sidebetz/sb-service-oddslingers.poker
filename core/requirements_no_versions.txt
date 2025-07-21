@@ -1,0 +1,133 @@
+# Core Django and ASGI
+django
+channels
+daphne
+asgiref
+
+# Database
+psycopg2-binary
+
+# Redis and Caching
+redis
+django-redis
+
+# HTTP and Async
+aiohttp
+aiosmtplib
+requests
+requests-oauthlib
+
+# Authentication and Authorization
+django-allauth
+oauthlib
+python3-openid
+
+# Email
+django-anymail
+
+# Task Queue
+dramatiq
+django-dramatiq
+
+# Development and Debugging
+django-debug-toolbar
+django-extensions
+ipython
+ipdb
+django-pdb
+
+# User Management
+django-user-sessions
+django-hijack
+
+# Web Scraping and Parsing
+beautifulsoup4
+html2text
+lxml
+
+# Template and Markup
+jinja2
+markupsafe
+
+# Security
+cryptography
+pyopenssl
+certifi
+
+# Geographic and IP
+geoip2
+maxminddb
+
+# YAML and Configuration
+pyyaml
+python-dotenv
+strictyaml
+
+# Date and Time
+python-dateutil
+pytz
+
+# Monitoring and Logging
+sentry-sdk
+prometheus-client
+
+# Web Framework (Flask for utilities)
+flask
+werkzeug
+
+# Networking and Communication
+twisted
+autobahn
+hyperlink
+txaio
+
+# Development Tools
+flake8
+mypy
+coverage
+codecov
+
+# Terminal and CLI
+bpython
+blessings
+click
+argh
+
+# Process Management
+psutil
+watchdog
+
+# Cron Jobs
+yacron
+
+# XML Processing
+defusedxml
+
+# Async Support
+async-timeout
+greenlet
+gevent
+
+# Utilities
+six
+attrs
+constantly
+incremental
+automat
+pathtools
+distro
+
+# Communication Platforms
+zulip
+zulip-bots
+zulip-botserver
+
+# Testing
+unittest-xml-reporting
+junit-xml
+
+# Matrix Client (if needed)
+matrix-client
+
+# Scheduler
+crontab==0.22.8

@@ -167,7 +167,7 @@ class MegaphoneGamestateTest(SocketTest):
 
         assert next_player_sockets
 
-        socket_ids = lambda queryset: set(s.id for s in queryset)
+        socket_ids = lambda queryset: {s.id for s in queryset}
 
         socket_ids_list = [
             socket_ids(socket_qset) for socket_qset in socks_and_states.keys()

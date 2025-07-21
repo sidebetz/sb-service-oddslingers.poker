@@ -216,7 +216,7 @@ def daily_report(send_zulip=True):
 
 
 @dramatiq.actor(priority=2)
-def track_analytics_event(username: Optional[str],
+def track_analytics_event(username: str | None,
                           event: str,
                           topic: str = 'Site Events',
                           stream: str = 'analytics'):

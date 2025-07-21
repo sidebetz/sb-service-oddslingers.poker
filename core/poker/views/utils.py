@@ -1,5 +1,6 @@
 from uuid import UUID
-from typing import List, Mapping
+from typing import List
+from collections.abc import Mapping
 from collections import defaultdict
 
 from django.db.models import Sum, Q, QuerySet, Count
@@ -18,7 +19,7 @@ User = get_user_model()
 
 
 def get_view_format_tables(tables=None, user: User = None,
-                           extra: dict=None) -> List[dict]:
+                           extra: dict=None) -> list[dict]:
     extra = defaultdict(dict, extra or {})
 
     homepage_game = featured_table(only=('id',))
@@ -32,7 +33,7 @@ def get_view_format_tables(tables=None, user: User = None,
         .only('user__username', 'stack', 'position', 'table_id')
     )
 
-    players_by_table: Mapping[UUID, List[Player]] = defaultdict(list)
+    players_by_table: Mapping[UUID, list[Player]] = defaultdict(list)
     for player in players:
         players_by_table[player.table_id].append(player)
 
@@ -75,7 +76,7 @@ def get_view_format_tables(tables=None, user: User = None,
     ]
 
 
-def get_visible_tournaments(user: User) -> List[dict]:
+def get_visible_tournaments(user: User) -> list[dict]:
     tournaments = Freezeout.objects\
                            .exclude(status=TournamentStatus.FINISHED.value)\
                            .exclude(status=TournamentStatus.CANCELED.value)\

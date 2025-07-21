@@ -135,7 +135,7 @@ class BadgeSubscriber(MutationSubscriber):
                 win['args'] for win in wins
                 if win['subj'] == player_name
             ]
-            for player_name in set(win['subj'] for win in wins)
+            for player_name in {win['subj'] for win in wins}
         }
         return {
             player: {
