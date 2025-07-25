@@ -4,6 +4,7 @@ nodaemon=true
 environment=HOME="/home/django"
 PYTHONPATH="/opt/oddslingers.poker/core"
 ODDSLINGERS_ROOT="/opt/oddslingers.poker"
+PORT="8001"
 logfile=/dev/stdout 
 logfile_maxbytes=0
 pidfile=/tmp/supervisord.pid
@@ -12,8 +13,8 @@ pidfile=/tmp/supervisord.pid
 
 
 [program:daphne-asgi]
-priority=2
-command=/bin/bash -c "doppler run -- daphne -b 0.0.0.0 -p 8000 core.oddslingers.asgi:channel_layer"
+priority=1
+command=/bin/bash -c "doppler run -- daphne -b 0.0.0.0 -p 8001 core.oddslingers.asgi:channel_layer"
 user=django
 autostart=true
 autorestart=true
@@ -23,11 +24,11 @@ stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
 stderr_logfile_maxbytes=0
-environment=PYTHONPATH="/opt/oddslingers.poker/core",ODDSLINGERS_ROOT="/opt/oddslingers.poker"
+environment=PYTHONPATH="/opt/oddslingers.poker/core",ODDSLINGERS_ROOT="/opt/oddslingers.poker",PORT="8001",HOME="/home/django"
 stopwaitsecs=10
 
 [program:channels_worker-wsgi]
-priority=2
+priority=1
 command=/bin/bash -c "doppler run -- python /opt/oddslingers.poker/core/manage.py runworker --verbosity=2"
 user=django
 autostart=true

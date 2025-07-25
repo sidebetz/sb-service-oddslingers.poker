@@ -1,0 +1,66 @@
+[supervisord]
+user = root
+nodaemon=true
+environment=HOME="/home/django"
+PYTHONPATH="/opt/oddslingers.poker/core"
+ODDSLINGERS_ROOT="/opt/oddslingers.poker"
+PORT="${DAPHNE_PORT}"
+logfile=/dev/stdout 
+logfile_maxbytes=0
+pidfile=/tmp/supervisord.pid
+; Optional: set log level
+; loglevel=info
+
+
+[program:daphne-asgi]
+priority=1
+command=/bin/bash -c "doppler run -- daphne -b 127.0.0.1 -p ${DAPHNE_PORT} core.oddslingers.asgi:channel_layer"
+user=django
+autostart=true
+autorestart=true
+# stdout_logfile=/opt/oddslingers.poker/data/logs/daphne.log
+# stderr_logfile=/opt/oddslingers.poker/data/logs/daphne_error.log
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+environment=PYTHONPATH="/opt/oddslingers.poker/core",ODDSLINGERS_ROOT="/opt/oddslingers.poker",PORT="${DAPHNE_PORT}",HOME="/home/django"
+stopwaitsecs=10
+
+[program:channels_worker-wsgi]
+priority=1
+command=/bin/bash -c "doppler run -- python /opt/oddslingers.poker/core/manage.py runworker --verbosity=2"
+user=django
+autostart=true
+autorestart=true
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+environment=PYTHONPATH="/opt/oddslingers.poker/core",ODDSLINGERS_ROOT="/opt/oddslingers.poker"
+stopwaitsecs=10
+
+[program:dramatiq]
+priority=3
+command=/bin/bash -c "doppler run -- dramatiq --path /opt/oddslingers.poker/core --processes 1 --threads 2 django_dramatiq.setup django_dramatiq.tasks oddslingers.tasks"
+user=django
+autostart=true
+autorestart=true
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+environment=PYTHONPATH="/opt/oddslingers.poker/core",ODDSLINGERS_ROOT="/opt/oddslingers.poker"
+stopwaitsecs=10
+
+[program:nginx]
+priority=2
+command=/usr/sbin/nginx -g "daemon off;" -c /opt/oddslingers.poker/etc/nginx/sb-nginx.conf
+user=root
+autostart=true
+autorestart=true
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+stopwaitsecs=10

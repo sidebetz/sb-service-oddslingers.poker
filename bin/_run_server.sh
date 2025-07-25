@@ -23,7 +23,11 @@ cleanup() {
 trap cleanup SIGINT SIGTERM
 
 echo "🔐 Starting Doppler secrets injection..."
-runuser -u $RUN_USER -- doppler run -- echo "✅ Doppler secrets loaded"
+# runuser -u $RUN_USER -- doppler run -- echo "✅ Doppler secrets loaded"
+doppler secrets download -p oddslinger --no-check-version --no-file --format env --no-check-version --no-file --format env
+
+echo "🔐 Checking redis Server is reachable" 
+runuser -u $RUN_USER -- doppler run -- python /opt/oddslingers.poker/bin/check_redis.py
 
 # Run DB migrations
 echo "📦 Running Django migrations..."
@@ -33,10 +37,22 @@ runuser -u $RUN_USER -- doppler run -- python "${CORE_DIR}"/manage.py migrate --
 echo "🧹 Collecting static files..."
 runuser -u $RUN_USER -- doppler run -- python "${CORE_DIR}"/manage.py collectstatic --noinput
 
-echo "🚀 Starting supervisord..."
-exec /usr/bin/supervisord -n -c /opt/oddslingers.poker/etc/supervisor/sb-supervisord.conf
+# Cleanup existing *.conf files if exists 
+echo "🧹 Cleanup of config files" 
+rm -f /opt/oddslingers.poker/etc/nginx/sb-nginx.conf /opt/oddslingers.poker/etc/supervisor/sb-supervisord.conf
 
+# Create nginx.conf and supervisord.conf 
+echo "🛠️ Generating nginx.conf"
+doppler run  -- envsubst '$DAPHNE_PORT $NGINX_PORT' < /opt/oddslingers.poker/etc/nginx/sb-nginx.conf.template > /opt/oddslingers.poker/etc/nginx/sb-nginx.conf
+echo "🛠️ Generating supervisord.conf " 
+doppler run  -- envsubst '$DAPHNE_PORT $NGINX_PORT' < /opt/oddslingers.poker/etc/supervisor/sb-supervisord.conf.template > /opt/oddslingers.poker/etc/supervisor/sb-supervisord.conf 
 
+# echo "🚀 Starting supervisord..."
+# exec /usr/bin/supervisord -n -c /opt/oddslingers.poker/etc/supervisor/sb-supervisord.conf
+
+echo "🚀 Starting Django runserver..."
+cd /opt/oddslingers.poker/core
+runuser -u $RUN_USER -- doppler run -- python manage.py runserver 0.0.0.0:8080 
 
 # moved this logic to supervisor for process management 
 # echo "🚀 Starting Django app via Daphne on port 8000..."
